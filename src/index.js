@@ -2,17 +2,20 @@
 import app from './app';
 import { Server as WebsocketServer } from 'socket.io';
 import http from 'http';
+import { PORT } from './config';
 
 //database creation
 import { connectDB } from './db';
+
 connectDB();
 
-const server = http.createServer(app);
-const httpServer = server.listen(3000);
-const io = new WebsocketServer(httpServer);
+//socket functions imports and configs
+import sockets from './sockets';
+import { socketOptions } from './config';
 
-io.on("connection", (socket) => {
-    console.log("Im the socket");
-    console.log(socket);
-});
-  
+const server = http.createServer(app);
+const io = new WebsocketServer(server, socketOptions);
+
+sockets(io);
+
+server.listen(PORT || 8000);
